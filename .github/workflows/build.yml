@@ -21,11 +21,10 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: 🔧 Dar permisos a gradlew
-        run: chmod +x gradlew
-
       - name: 📦 Compilar APK
-        run: ./gradlew assembleDebug
+        run: |
+          chmod +x gradlew 2>/dev/null || true
+          ./gradlew assembleDebug
 
       - name: ☁️ Subir APK
         uses: actions/upload-artifact@v4
