@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: 📥 Obtener código
-        uses: actions/checkout@v4  # Actualizado a versión compatible
+        uses: actions/checkout@v4  # Versión compatible actualizada
 
       - name: ☕ Configurar JDK 11
         uses: actions/setup-java@v5
