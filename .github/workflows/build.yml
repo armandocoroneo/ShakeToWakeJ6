@@ -8,26 +8,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-24.04  # Versión fija, evita cambios inesperados
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up JDK 11
-      uses: actions/setup-java@v5
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
-    
-    - name: Make gradlew executable
-      run: chmod +x gradlew
-    
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
-    
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: 📥 Obtener código
+        uses: actions/checkout@v4  # Actualizado a versión compatible
+
+      - name: ☕ Configurar JDK 11
+        uses: actions/setup-java@v5
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: 🔧 Dar permisos de ejecución a gradlew
+        run: chmod +x gradlew
+
+      - name: 📦 Compilar APK de depuración
+        run: ./gradlew assembleDebug
+
+      - name: ☁️ Subir APK generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
