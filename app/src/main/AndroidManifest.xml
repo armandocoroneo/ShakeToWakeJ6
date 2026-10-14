@@ -28,7 +28,7 @@
         <service
             android:name=".ScreenWakeService"
             android:exported="false"
-            android:foregroundServiceType="sensorType" />
+            android:foregroundServiceType="sensor"
 
     </application>
 
