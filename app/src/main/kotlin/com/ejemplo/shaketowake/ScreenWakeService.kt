@@ -7,6 +7,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.Context
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -35,6 +37,7 @@ class ScreenWakeService : Service(), SensorEventListener {
 
         startForegroundService()
         registerSensorListener()
+        registerChargerReceiver()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -76,6 +79,24 @@ class ScreenWakeService : Service(), SensorEventListener {
         }
     }
 
+    private fun registerChargerReceiver() {
+        val intentFilter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(chargerReceiver, intentFilter, Context.RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(chargerReceiver, intentFilter)
+        }
+    }
+
+    private val chargerReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Intent.ACTION_POWER_CONNECTED) {
+                wakeUpScreen()
+                Log.d("ShakeToWake", "Pantalla encendida por cargador")
+            }
+        }
+    }
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0]
@@ -114,6 +135,7 @@ class ScreenWakeService : Service(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(this)
+        unregisterReceiver(chargerReceiver)
         wakeLock?.release()
     }
 
