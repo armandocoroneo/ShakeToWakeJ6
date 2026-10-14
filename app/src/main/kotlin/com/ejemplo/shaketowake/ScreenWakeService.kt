@@ -37,6 +37,10 @@ class ScreenWakeService : Service(), SensorEventListener {
         registerSensorListener()
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
+
     private fun startForegroundService() {
         val channelId = "screen_wake_channel"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
