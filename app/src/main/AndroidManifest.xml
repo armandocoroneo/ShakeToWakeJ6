@@ -25,7 +25,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ScreenWakeService" />
+        <service
+    android:name=".ScreenWakeService"
+    android:stopWithTask="false" />
 
     </application>
 
