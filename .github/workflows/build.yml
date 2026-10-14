@@ -21,9 +21,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: 📦 Compilar APK
+      - name: 🔑 Dar permisos y compilar
         run: |
-          chmod +x gradlew 2>/dev/null || true
+          chmod +x gradlew
           ./gradlew assembleDebug
 
       - name: ☁️ Subir APK
