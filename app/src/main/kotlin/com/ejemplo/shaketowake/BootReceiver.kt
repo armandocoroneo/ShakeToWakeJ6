@@ -15,6 +15,14 @@ class BootReceiver : BroadcastReceiver() {
                 context?.startService(serviceIntent)
             }
             Log.d("ShakeToWake", "Servicio iniciado después del boot")
+        } else if (intent?.action == Intent.ACTION_POWER_CONNECTED) {
+            val serviceIntent = Intent(context, ScreenWakeService::class.java)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                context?.startForegroundService(serviceIntent)
+            } else {
+                context?.startService(serviceIntent)
+            }
+            Log.d("ShakeToWake", "Servicio iniciado por cargador")
         }
     }
 }
