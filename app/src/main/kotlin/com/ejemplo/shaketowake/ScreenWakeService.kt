@@ -27,7 +27,7 @@ class ScreenWakeService : Service(), SensorEventListener {
     private var accelerometer: Sensor? = null
     private var lastShakeTime = 0L
     private val shakeThreshold = 25f
-    private val shakeTimerInterval = 500L
+    private val shakeTimerInterval = 200L
 
     override fun onCreate() {
         super.onCreate()
@@ -125,7 +125,7 @@ class ScreenWakeService : Service(), SensorEventListener {
                 )
             }
 
-            wakeLock?.acquire(3000)
+            wakeLock?.acquire(10000)
             Log.d("ShakeToWake", "Pantalla encendida por shake")
         } catch (e: Exception) {
             Log.e("ShakeToWake", "Error al encender pantalla: ${e.message}")
