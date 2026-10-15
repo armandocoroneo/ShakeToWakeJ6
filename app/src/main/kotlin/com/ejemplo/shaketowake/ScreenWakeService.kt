@@ -29,6 +29,10 @@ class ScreenWakeService : Service(), SensorEventListener {
     private val shakeThreshold = 25f
     private val shakeTimerInterval = 200L
 
+    // Tiempo que el sensor acumulará datos antes de despertar a la CPU (en microsegundos).
+    // 5,000,000 us = 5 segundos. Esto ahorra mucha batería.
+    private val maxReportLatencyUs = 5000000
+
     override fun onCreate() {
         super.onCreate()
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -75,7 +79,14 @@ class ScreenWakeService : Service(), SensorEventListener {
 
     private fun registerSensorListener() {
         if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            // AQUÍ ESTÁ LA MAGIA DEL AHORRO DE BATERÍA (Sensor Batching)
+            // El sensor guardará los datos y nos los entregará cada 5 segundos.
+            sensorManager.registerListener(
+                this,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_NORMAL,
+                maxReportLatencyUs
+            )
         }
     }
 
@@ -136,7 +147,13 @@ class ScreenWakeService : Service(), SensorEventListener {
         super.onDestroy()
         sensorManager.unregisterListener(this)
         unregisterReceiver(chargerReceiver)
-        wakeLock?.release()
+        
+        // ARREGLO DEL CRASH: Solo liberar el WakeLock si está activo.
+        // Si no está activo, no hacemos nada para evitar la excepción.
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+        }
+        wakeLock = null
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
